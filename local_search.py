@@ -14,7 +14,7 @@ def local_search(current_instance, neighbor_fn, obj_fn, it):
         # in every iterations, the neighborhhod is calculated and the best neighbor is reassigned to the current state
         neighbors = neighbor_fn(current_instance)
         for n in neighbors:
-            if obj_fn(n) < obj_fn(current_instance):
+            if obj_fn(n) <= obj_fn(current_instance):
                 current_instance = n
 
         # if the current instance doesn't change, abort the algorithm
