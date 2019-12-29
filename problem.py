@@ -1,7 +1,8 @@
 import instance_gen
 import copy
+import random
 
-# HOW A SOLUTION IS ENCODED
+# HOW A STATE/SOLUTION IS ENCODED
 # [boxsize, boxes]
 # boxes = [box1, box2, ...]
 # box1 = [rect1, rect2, ...]
@@ -17,7 +18,10 @@ def trivia_sol(input):
     boxes = []
     sol = [input[0], boxes]
     for i in input[1]:
-        sol[1].append([[0, 0, i[0], i[1]]])
+        x = random.randint(0, input[0]-i[0])
+        y = random.randint(0, input[0]-i[1])
+
+        sol[1].append([[x, y, i[0], i[1]]])
     return sol
 
 
@@ -43,7 +47,7 @@ def moveRect(rect ,box_src, box_dst):
 # 1. when a rectangle moves from one box to another without any positional change
 # 2. a rectagle moves one unit
 # 3. a rectagle rotates
-
+# returns a list of states
 def geometric_neighbor(sol):
     initial = sol
     neighbors = []
@@ -91,7 +95,7 @@ def geometric_neighbor(sol):
                     collide = isCollision(rect, rect2)
             if not collide and not isOutOfBound(initial[0], rect):
                 neighbors.append(copy.deepcopy(initial))
-            rect[0] = rect[0] + 1 # resetting the x
+            rect[0] = rect[0] + 1 # undo
 
 
             # forward y + 1
@@ -111,11 +115,29 @@ def geometric_neighbor(sol):
                     collide = isCollision(rect, rect2)
             if not collide and not isOutOfBound(initial[0], rect):
                 neighbors.append(copy.deepcopy(initial))
-            rect[1] = rect[1] + 1
+            rect[1] = rect[1] + 1 # undo
 
 
     print("Neighborhood: " + str(len(neighbors)))
     return neighbors
+
+
+
+def objective_fn(state):
+    # the more empty boxes, the better
+    # therefore counting empy boxes
+    boxes = state[1]
+    emptybox = 0
+    for box in boxes:
+        if len(box) == 0:
+            emptybox += 1
+
+    print("Emptybox: " + str(emptybox))
+
+
+    eval  = 1/(1+emptybox)
+    return eval
+
 
 
 
