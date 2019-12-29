@@ -3,6 +3,7 @@ import random
 from tkinter import ttk
 import instance_gen
 import problem
+import local_search
 
 class App:
     def __init__(self, window, window_title):
@@ -123,12 +124,14 @@ class App:
         maxw = int(self.maxw.get())
         minh = int(self.minh.get())
         maxh = int(self.maxh.get())
-        self.input = instance_gen.generate_instance(L,N,minh,maxh,minw,maxw)
-        state = problem.trivia_sol(self.input)
-        self.visualize(state)
+        self.input = problem.trivia_sol(instance_gen.generate_instance(L,N,minh,maxh,minw,maxw))
+
+        self.visualize(self.input)
 
     def visualize(self, state):
         self.canvas1.delete("all")
+
+        state[1].sort(key=lambda item: (-len(item), item))
 
         # [9, [[[0, 0, 5, 6]], [[0, 0, 3, 7]], [[0, 0, 6, 4]]]]
         L = state[0]
@@ -151,8 +154,15 @@ class App:
 
 
     def visualize_geometric(self):
+        print("local search")
         if self.input != []:
-            print("local search")
+            # start with trivia solution
+            start_state = self.input
+
+            result = local_search.local_search(start_state, problem.geometric_neighbor, problem.objective_fn, 100)
+            self.visualize(result)
+
+
 
 
 App(tk.Tk(), "Local Search")

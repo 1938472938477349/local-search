@@ -62,7 +62,8 @@ def geometric_neighbor(sol):
                     # can rect can be moved?
                     collide = False
                     for rect_dst in box_dst:
-                        collide = isCollision(rect_src, rect_dst)
+                        if isCollision(rect_src, rect_dst):
+                            collide = True
                     if not collide:
                         moveRect(rect_src, box_src, box_dst)
                         neighbors.append(copy.deepcopy(initial))
@@ -83,7 +84,9 @@ def geometric_neighbor(sol):
             collide = False
             for rect2 in box_initial:
                 if rect_initial != rect2:
-                    collide = isCollision(rect, rect2)
+                    if isCollision(rect, rect2):
+                        collide = True
+
             if not collide and not isOutOfBound(initial[0], rect):
                 neighbors.append(copy.deepcopy(initial))
 
@@ -92,7 +95,8 @@ def geometric_neighbor(sol):
             collide = False
             for rect2 in box_initial:
                 if rect_initial != rect2:
-                    collide = isCollision(rect, rect2)
+                    if isCollision(rect, rect2):
+                        collide = True
             if not collide and not isOutOfBound(initial[0], rect):
                 neighbors.append(copy.deepcopy(initial))
             rect[0] = rect[0] + 1 # undo
@@ -103,7 +107,8 @@ def geometric_neighbor(sol):
             collide = False
             for rect2 in box_initial:
                 if rect_initial != rect2:
-                    collide = isCollision(rect, rect2)
+                    if isCollision(rect, rect2):
+                        collide = True
             if not collide and not isOutOfBound(initial[0], rect):
                 neighbors.append(copy.deepcopy(initial))
 
@@ -112,13 +117,13 @@ def geometric_neighbor(sol):
             collide = False
             for rect2 in box_initial:
                 if rect_initial != rect2:
-                    collide = isCollision(rect, rect2)
+                    if isCollision(rect, rect2):
+                        collide = True
             if not collide and not isOutOfBound(initial[0], rect):
                 neighbors.append(copy.deepcopy(initial))
             rect[1] = rect[1] + 1 # undo
 
 
-    print("Neighborhood: " + str(len(neighbors)))
     return neighbors
 
 
@@ -132,11 +137,11 @@ def objective_fn(state):
         if len(box) == 0:
             emptybox += 1
 
-    print("Emptybox: " + str(emptybox))
-
-
-    eval  = 1/(1+emptybox)
+    eval  = 100/(1+emptybox)
     return eval
+
+
+
 
 
 
