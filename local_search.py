@@ -31,6 +31,7 @@ def local_search(start_instance, neighbor_fn, obj_fn, it):
         else:
             current_instance = minimum_neighbor
 
+
     return current_instance
 
 

@@ -64,7 +64,8 @@ class App:
         self.maxh.insert(0,"10")
         self.maxh.pack()
 
-        self.scaleR = tk.Scale(window, from_=1, to=10000, orient=tk.HORIZONTAL, label="Iterations", command=self.tmp, width= 10, sliderlength= 15)
+        self.scaleR = tk.Scale(window, from_=1, to=1000, orient=tk.HORIZONTAL, label="Iterations", command=self.tmp, width= 10, sliderlength= 15)
+        self.scaleR.set(50)
         self.scaleR.pack()
 
 
@@ -154,12 +155,11 @@ class App:
 
 
     def visualize_geometric(self):
-        print("local search")
         if self.input != []:
             # start with trivia solution
             start_state = self.input
 
-            result = local_search.local_search(start_state, problem.geometric_neighbor, problem.objective_fn, 100)
+            result = local_search.local_search(start_state, problem.geometric_neighbor, problem.objective_fn, int(self.scaleR.get()))
             self.visualize(result)
 
 
