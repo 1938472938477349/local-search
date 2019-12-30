@@ -83,13 +83,18 @@ def geometric_neighbor(sol):
     #                     moveRect(rect_src, box_dst, box_src)
 
     for box_src in initial[1]:
+        if len(neighbors1) > 1:
+            break
         for rect_src in box_src:
+            if len(neighbors1) >1:
+                break
             stepsize = round(initial[0] * 0.1)
 
             for box_dst in initial[1]:
-                if box_dst != box_src and len(box_dst) >= len(box_src):
+                if box_dst != box_src and len(box_dst) >= len(box_src) and len(neighbors1) < 2:
                     w = rect_src[2]
                     h = rect_src[3]
+
                     for y in range(0, initial[0]-h, stepsize):
                         for x in range(0, initial[0]-w, stepsize):
                             collide = False
@@ -100,9 +105,7 @@ def geometric_neighbor(sol):
                             if not collide:
                                 addRect([x,y,w,h], box_dst)
                                 removeRect(rect_src, box_src)
-
                                 neighbors1.append(copy.deepcopy(initial))
-
                                 addRect(rect_src, box_src)
                                 removeRect([x,y,w,h], box_dst)
                                 break
@@ -111,71 +114,93 @@ def geometric_neighbor(sol):
                         break
 
 
+                # 90 degree placement
+                if box_dst != box_src and len(box_dst) >= len(box_src) and len(neighbors1) < 2:
+                    w = rect_src[3]
+                    h = rect_src[2]
+                    for y in range(0, initial[0] - h, stepsize):
+                        for x in range(0, initial[0] - w, stepsize):
+                            collide = False
+                            for rect_dst in box_dst:
+                                if isCollision([x, y, w, h], rect_dst):
+                                    collide = True
+                                    break
+                            if not collide:
+                                addRect([x, y, w, h], box_dst)
+                                removeRect(rect_src, box_src)
+                                neighbors1.append(copy.deepcopy(initial))
+                                addRect(rect_src, box_src)
+                                removeRect([x, y, w, h], box_dst)
+                                break
+                        else:
+                            continue
+                        break
+
     # geometric operation type 2, moving a rectagle within a box
 
 
-    initial = sol
-    stepsize = round(initial[0] * 0.1)
-
-    for box in initial[1]:
-        box_initial = copy.deepcopy(box)
-
-        for rect in box:
-            rect_initial = copy.deepcopy(rect)
-
-            # forward x + 1
-            rect[0] = rect[0] + stepsize
-            collide = False
-            for rect2 in box_initial:
-                if rect_initial != rect2:
-                    if isCollision(rect, rect2):
-                        collide = True
-                        break
-            if not collide and not isOutOfBound(initial[0], rect):
-                neighbors2.append(copy.deepcopy(initial))
-
-            # backward x - 1
-            rect[0] = rect[0] - 2*stepsize
-            collide = False
-            for rect2 in box_initial:
-                if rect_initial != rect2:
-                    if isCollision(rect, rect2):
-                        collide = True
-                        break
-            if not collide and not isOutOfBound(initial[0], rect):
-                neighbors2.append(copy.deepcopy(initial))
-            rect[0] = rect[0] + stepsize # undo
-
-
-            # forward y + 1
-            rect[1] = rect[1] + stepsize
-            collide = False
-            for rect2 in box_initial:
-                if rect_initial != rect2:
-                    if isCollision(rect, rect2):
-                        collide = True
-                        break
-            if not collide and not isOutOfBound(initial[0], rect):
-                neighbors2.append(copy.deepcopy(initial))
-
-            # backward y - 1
-            rect[1] = rect[1] - 2*stepsize
-            collide = False
-            for rect2 in box_initial:
-                if rect_initial != rect2:
-                    if isCollision(rect, rect2):
-                        collide = True
-                        break
-            if not collide and not isOutOfBound(initial[0], rect):
-                neighbors2.append(copy.deepcopy(initial))
-            rect[1] = rect[1] + stepsize # undo
+    # initial = sol
+    # stepsize = round(initial[0] * 0.1)
+    #
+    # for box in initial[1]:
+    #     box_initial = copy.deepcopy(box)
+    #
+    #     for rect in box:
+    #         rect_initial = copy.deepcopy(rect)
+    #
+    #         # forward x + 1
+    #         rect[0] = rect[0] + stepsize
+    #         collide = False
+    #         for rect2 in box_initial:
+    #             if rect_initial != rect2:
+    #                 if isCollision(rect, rect2):
+    #                     collide = True
+    #                     break
+    #         if not collide and not isOutOfBound(initial[0], rect):
+    #             neighbors2.append(copy.deepcopy(initial))
+    #
+    #         # backward x - 1
+    #         rect[0] = rect[0] - 2*stepsize
+    #         collide = False
+    #         for rect2 in box_initial:
+    #             if rect_initial != rect2:
+    #                 if isCollision(rect, rect2):
+    #                     collide = True
+    #                     break
+    #         if not collide and not isOutOfBound(initial[0], rect):
+    #             neighbors2.append(copy.deepcopy(initial))
+    #         rect[0] = rect[0] + stepsize # undo
+    #
+    #
+    #         # forward y + 1
+    #         rect[1] = rect[1] + stepsize
+    #         collide = False
+    #         for rect2 in box_initial:
+    #             if rect_initial != rect2:
+    #                 if isCollision(rect, rect2):
+    #                     collide = True
+    #                     break
+    #         if not collide and not isOutOfBound(initial[0], rect):
+    #             neighbors2.append(copy.deepcopy(initial))
+    #
+    #         # backward y - 1
+    #         rect[1] = rect[1] - 2*stepsize
+    #         collide = False
+    #         for rect2 in box_initial:
+    #             if rect_initial != rect2:
+    #                 if isCollision(rect, rect2):
+    #                     collide = True
+    #                     break
+    #         if not collide and not isOutOfBound(initial[0], rect):
+    #             neighbors2.append(copy.deepcopy(initial))
+    #         rect[1] = rect[1] + stepsize # undo
 
 
 
     neighbors = neighbors1 + neighbors2
     # print("Number of Neighbor1: " + str(len(neighbors1)))
     # print("Number of Neighbor2: " + str(len(neighbors2)))
-    print("Number of Neighbor: " + str(len(neighbors)))
+    #print("Number of Neighbor: " + str(len(neighbors)))
     return neighbors
 
 
@@ -230,7 +255,7 @@ def objective_fn(state):
     #             rectcen.append([x,y])
     #         intra_variances.append(np.var(rectcen))
     #
-    # intra_variances_mean = sum(intra_variances) #/ len(intra_variances)
+    # intra_variances_mean = sum(intra_variances) / len(intra_variances)
 
 
 
@@ -246,7 +271,7 @@ def objective_fn(state):
     #print("Concentration " + str(concentration))
     #print("Inter Variance " + str(inter_variance))
     #print("Intra Variance " + str(intra_variances_mean))
-    eval  = 1000 * concentration # +  inter_variance +  intra_variances_mean + 1000000 * emptybox_value +
+    eval  = 1000 * concentration #+  intra_variances_mean # +  inter_variance +  intra_variances_mean + 1000000 * emptybox_value +
 
 
     return eval

@@ -20,7 +20,7 @@ class App:
         self.relative_size = (self.canvas_width / self.width , self.canvas_height / self.height)
 
 
-        self.canvas1 = tk.Canvas(window, width = self.canvas_width, height = self.canvas_height, background='#%02x%02x%02x' % (0, 0, 0))
+        self.canvas1 = tk.Canvas(window, width = self.canvas_width, height = self.canvas_height, background='black')
 
         self.canvas1.pack(side=tk.LEFT)
         self.File = ""
@@ -64,10 +64,9 @@ class App:
         self.maxh.insert(0,"10")
         self.maxh.pack()
 
-        self.scaleR = tk.Scale(window, from_=1, to=1000, orient=tk.HORIZONTAL, label="Iterations", command=self.tmp, width= 10, sliderlength= 15)
+        self.scaleR = tk.Scale(window, from_=10, to=10000, orient=tk.HORIZONTAL, label="Iterations", command=self.tmp, width= 10, sliderlength= 15)
         self.scaleR.set(50)
         self.scaleR.pack()
-
 
 
         self.btn_save= tk.Button(window, text="Geometric", width=15, command=self.visualize_geometric)

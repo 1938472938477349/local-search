@@ -11,6 +11,7 @@ def local_search(start_instance, neighbor_fn, obj_fn, it):
     current_instance = start_instance
 
     for i in range(0, it):
+        print(i)
 
         # in every iterations, the neighborhhod is calculated and the best neighbor is reassigned to the current state
         neighbors = neighbor_fn(current_instance)
@@ -27,6 +28,7 @@ def local_search(start_instance, neighbor_fn, obj_fn, it):
 
         # if the current instance doesn't change, abort the algorithm
         if current_instance == minimum_neighbor:
+            print("Iteration until minimum: " + str(i))
             break
         else:
             current_instance = minimum_neighbor
