@@ -1,7 +1,5 @@
-import instance_gen
+from backup import instance_gen
 import copy
-import random
-import numpy as np
 
 # HOW A STATE/SOLUTION IS ENCODED
 # [boxsize, boxes]
@@ -54,18 +52,16 @@ def addRect(rect, box_dst):
 
 
 # a geometric neighborhood is
-# 1. when a rectangle moves from one box to another without any positional change
-# 2. a rectagle moves one unit
-# 3. a rectagle rotates
+# when a rectangle moves from one box to another
 # returns a list of states
 def geometric_neighbor(sol):
     initial = sol
+    initial[1].sort(key=lambda item: (len(item), item))
 
     neighbors1 = []
     neighbors2 = []
 
     # geometric operation type 1, moving from one box to another
-
     # for box_src in initial[1]:
     #     for rect_src in box_src:
     #         # every rect in src can be moved
@@ -83,10 +79,10 @@ def geometric_neighbor(sol):
     #                     moveRect(rect_src, box_dst, box_src)
 
     for box_src in initial[1]:
-        if len(neighbors1) > 1:
+        if len(neighbors1) >= 2:
             break
         for rect_src in box_src:
-            if len(neighbors1) >1:
+            if len(neighbors1) >= 2:
                 break
             stepsize = round(initial[0] * 0.1)
 
@@ -136,9 +132,8 @@ def geometric_neighbor(sol):
                             continue
                         break
 
+
     # geometric operation type 2, moving a rectagle within a box
-
-
     # initial = sol
     # stepsize = round(initial[0] * 0.1)
     #
@@ -195,13 +190,9 @@ def geometric_neighbor(sol):
     #             neighbors2.append(copy.deepcopy(initial))
     #         rect[1] = rect[1] + stepsize # undo
 
+    # neighbors = neighbors1 + neighbors2
 
-
-    neighbors = neighbors1 + neighbors2
-    # print("Number of Neighbor1: " + str(len(neighbors1)))
-    # print("Number of Neighbor2: " + str(len(neighbors2)))
-    #print("Number of Neighbor: " + str(len(neighbors)))
-    return neighbors
+    return neighbors1
 
 
 # returns the centroid of a given rectangle
@@ -271,7 +262,7 @@ def objective_fn(state):
     #print("Concentration " + str(concentration))
     #print("Inter Variance " + str(inter_variance))
     #print("Intra Variance " + str(intra_variances_mean))
-    eval  = 1000 * concentration #+  intra_variances_mean # +  inter_variance +  intra_variances_mean + 1000000 * emptybox_value +
+    eval  = emptybox_value + concentration
 
 
     return eval
