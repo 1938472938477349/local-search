@@ -45,8 +45,10 @@ class App:
         self.maxh.insert(0,"10")
         self.maxh.pack()
         self.scaleR = tk.Scale(window, from_=10, to=10000, orient=tk.HORIZONTAL, label="Iterations", width= 10, sliderlength= 15)
-        self.scaleR.set(50)
+        self.scaleR.set(1000)
         self.scaleR.pack()
+        self.btn_save= tk.Button(window, text="Overlap", width=15, command=self.visualize_overlap)
+        self.btn_save.pack(side=tk.BOTTOM)
         self.btn_save= tk.Button(window, text="Geometric", width=15, command=self.visualize_geometric)
         self.btn_save.pack(side=tk.BOTTOM)
         self.btn_browse1= tk.Button(window, text="Trivial Solution", width=15, command=self.visualize_trivial)
@@ -131,5 +133,17 @@ class App:
                 self.listbox.insert(tk.END, str(h))
             self.listbox.insert(tk.END, str(result))
             self.visualize(result)
+
+    # visualize solution via overlap neighbor
+    def visualize_overlap(self):
+        if self.input != []:
+            start_state = self.input
+            result, history = local_search.local_search(start_state, algorithm.overlay_neighbor, algorithm.objective_fn_overlay, int(self.scaleR.get())+1)
+            for h in history:
+                self.listbox.insert(tk.END, str(h))
+            self.listbox.insert(tk.END, str(result))
+            self.visualize(result)
+
+
 
 App(tk.Tk(), "Local Search")
