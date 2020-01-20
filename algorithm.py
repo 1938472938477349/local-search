@@ -23,7 +23,7 @@ def isCollision(rect1, rect2):
 
 # check if a rect is out of bound
 def isOutOfBound(L, rect):
-    return rect[0] < 0 or rect[1] < 0 or rect[0] + rect[2] > L or rect[1] + rect[3] > L
+    return rect[0] < 0 or rect[1] < 0 or rect[0] + rect[2] >= L or rect[1] + rect[3] >= L
 
 # move a rect from one box to another
 def moveRect(rect ,box_src, box_dst):
@@ -149,7 +149,7 @@ def objective_fn(state,i,it):
 # [9, [[[0, 0, 5, 6]], [[0, 0, 3, 7]], [[0, 0, 6, 4]]]]
 def overlay_neighbor(sol,i,it):
     initial = sol
-    initial[1].sort(key=lambda item: (len(item), item))
+    initial[1].sort(key=lambda item: (-len(item), item))
     neighbors = []
 
     for box_src in initial[1]:
@@ -160,18 +160,16 @@ def overlay_neighbor(sol,i,it):
                 h = rect_src[3]
                 for y in range(0, initial[0]-h, stepsize):
                     for x in range(0, initial[0]-w, stepsize):
-                       # we do not test for collision but for intersection
                         maxIntersection = 0.0
                         for rect_dst in box_dst:
                            if rect_src != rect_dst and intersectionRect(rect_src, rect_dst) > maxIntersection:
                                 maxIntersection = intersectionRect(rect_src, rect_dst)
-                        if maxIntersection <= (1.0 - i/it):
-                            addRect([x,y,w,h], box_dst)
-                            removeRect(rect_src, box_src)
-                            neighbors.append(copy.deepcopy(initial))
-                            addRect(rect_src, box_src)
-                            removeRect([x,y,w,h], box_dst)
-
+                        if maxIntersection <= max(0.0, 1.0 - i / (it/2)):
+                                addRect([x,y,w,h], box_dst)
+                                removeRect(rect_src, box_src)
+                                neighbors.append(copy.deepcopy(initial))
+                                addRect(rect_src, box_src)
+                                removeRect([x,y,w,h], box_dst)
                 # 90 degree placement
                 w = rect_src[3]
                 h = rect_src[2]
@@ -181,12 +179,14 @@ def overlay_neighbor(sol,i,it):
                         for rect_dst in box_dst:
                            if rect_src != rect_dst and intersectionRect(rect_src, rect_dst) > maxIntersection:
                                 maxIntersection = intersectionRect(rect_src, rect_dst)
-                        if maxIntersection <= (1.0 - i/it):
-                            addRect([x,y,w,h], box_dst)
-                            removeRect(rect_src, box_src)
-                            neighbors.append(copy.deepcopy(initial))
-                            addRect(rect_src, box_src)
-                            removeRect([x,y,w,h], box_dst)
+                        if maxIntersection <= max(0.0, 1.0 - i / (it/2)):
+                                addRect([x,y,w,h], box_dst)
+                                removeRect(rect_src, box_src)
+                                neighbors.append(copy.deepcopy(initial))
+                                addRect(rect_src, box_src)
+                                removeRect([x,y,w,h], box_dst)
+                if len(box_dst) == 0:
+                    break
 
     print("# of Neightbor: " + str(len(neighbors)))
     return neighbors
@@ -211,9 +211,89 @@ def objective_fn_overlay(state,i,it):
         for rect in box:
             for rect2 in box:
                 if rect != rect2:
-                    intersection_score += 1000* intersectionRect(rect, rect2) * i/it
+                    intersection_score += 1000* intersectionRect(rect, rect2) * i/(it/2)
 
 
     return emptybox_value + concentration + intersection_score
 
 # testing intersection print(intersectionRect([0,0,100,100],[50,50,100,100]))
+
+
+def rule_neighbor(sol,i,it):
+    # solution in a list
+    # [9, [[[0, 0, 5, 6]], [[0, 0, 3, 7]], [[0, 0, 6, 4]]]]
+    box_width = sol[0]
+    boxes = sol[1]
+
+    # convert state into a list of rect
+    lo_rect = []
+    for box in boxes:
+        for rect in box:
+            lo_rect.append(rect)
+
+    # calculate possible permutation by switching position of first element with rest of list
+    neighbor_list = []
+    a = 0
+    for b in range(1, len(lo_rect)):
+        # swap position
+        permutation = copy.deepcopy(lo_rect)
+        permutation[b], permutation[a] = permutation[a], permutation[b]
+        neighbor_list.append(permutation)
+
+    # convert permutation lists to actual state
+    neighbors = []
+    for nl in neighbor_list:
+        # nl = [[0,0,5,5],[0,0,3,3],[0,0,4,4],[0,0,2,2],[0,0,5,5]]
+        state = []
+        state.append(box_width)
+        boxes = []
+        box = []
+        for rect in nl:
+            # go through rectangle
+            # add rectangle to box until full
+            # add box to boxes
+            # empty box
+            found = False
+            for y in range (0, box_width-rect[3]):
+                for x in range(0, box_width-rect[2]):
+                    if not found:
+                        # set rect in question to a coordinate
+                        rect[0] = x
+                        rect[1] = y
+
+                        # check if the current position is avaiable
+                        collision = False
+                        for r in box:
+                            if isCollision(r, rect):
+                                collision = True
+                                break
+
+                        if not collision and not isOutOfBound(box_width, rect):
+                            box.append(rect)
+                            found = True
+            if not found:
+                # no position found
+                # add current box, create new box with the rect in it
+                boxes.append(box)
+                box = [rect]
+        boxes.append(box)
+        state.append(boxes)
+        neighbors.append(state)
+
+    print("# of Neightbor: " + str(len(neighbors)))
+    #if len(neighbors) != 0:
+    #    for n in neighbors:
+    #        print(n)
+    return neighbors
+
+
+
+
+def objective_fn_rule(state, i, it):
+    boxes = state[1]
+    nbox = 0
+    for box in boxes:
+        if len(box) != 0:
+            nbox += 1
+
+    return nbox

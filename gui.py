@@ -47,10 +47,12 @@ class App:
         self.scaleR = tk.Scale(window, from_=10, to=10000, orient=tk.HORIZONTAL, label="Iterations", width= 10, sliderlength= 15)
         self.scaleR.set(1000)
         self.scaleR.pack()
-        self.btn_save= tk.Button(window, text="Overlap", width=15, command=self.visualize_overlap)
-        self.btn_save.pack(side=tk.BOTTOM)
-        self.btn_save= tk.Button(window, text="Geometric", width=15, command=self.visualize_geometric)
-        self.btn_save.pack(side=tk.BOTTOM)
+        self.btn_save1= tk.Button(window, text="Rule-Based", width=15, command=self.visualize_rule)
+        self.btn_save1.pack(side=tk.BOTTOM)
+        self.btn_save2= tk.Button(window, text="Overlap", width=15, command=self.visualize_overlap)
+        self.btn_save2.pack(side=tk.BOTTOM)
+        self.btn_save3= tk.Button(window, text="Geometric", width=15, command=self.visualize_geometric)
+        self.btn_save3.pack(side=tk.BOTTOM)
         self.btn_browse1= tk.Button(window, text="Trivial Solution", width=15, command=self.visualize_trivial)
         self.btn_browse1.pack(side=tk.BOTTOM)
         self.btn_random= tk.Button(window, text="Random Value", width=15, command=self.random)
@@ -144,6 +146,14 @@ class App:
             self.listbox.insert(tk.END, str(result))
             self.visualize(result)
 
-
+    # visualize solution via rule-based neighbor
+    def visualize_rule(self):
+        if self.input != []:
+            start_state = self.input
+            result, history = local_search.local_search(start_state, algorithm.rule_neighbor, algorithm.objective_fn_rule, int(self.scaleR.get())+1)
+            for h in history:
+                self.listbox.insert(tk.END, str(h))
+            self.listbox.insert(tk.END, str(result))
+            self.visualize(result)
 
 App(tk.Tk(), "Local Search")

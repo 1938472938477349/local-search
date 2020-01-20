@@ -16,13 +16,13 @@ def local_search(start_instance, neighbor_fn, obj_fn, it):
                 minimum_neighbor = n
                 minimum_val = obj_fn(n,i,it)
                 #token = 0
-            #else:
+            #if obj_fn(n,i,it) == minimum_val:
             #    token = token + 1
 
             #if token == 100:
             #    break
         if current_instance == minimum_neighbor:
-            print("Iteration until minimum: " + str(i))
+            #print("Iteration until minimum: " + str(i))
             break
         else:
             current_instance = minimum_neighbor
