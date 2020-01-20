@@ -1,0 +1,23 @@
+Starting tests...
+# of Instances: 1| Box Length: 5| # of Boxes: 5
+Geometric Test Time... 0.015625
+Overlay Test Time... 0.359375
+Rule-Based Test Time... 0.015625
+
+Starting tests...
+# of Instances: 5| Box Length: 5| # of Boxes: 5
+Geometric Test Time... 0.0
+Overlay Test Time... 0.875
+Rule-Based Test Time... 0.03125
+
+Starting tests...
+# of Instances: 100| Box Length: 5| # of Boxes: 5
+Geometric Test Time... 0.265625
+Overlay Test Time... 28.265625
+Rule-Based Test Time... 0.390625
+
+Starting tests...
+# of Instances: 1000| Box Length: 5| # of Boxes: 5
+Geometric Test Time... 2.5625
+Overlay Test Time... 307.75
+Rule-Based Test Time... 3.9375

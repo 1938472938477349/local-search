@@ -188,7 +188,7 @@ def overlay_neighbor(sol,i,it):
                 if len(box_dst) == 0:
                     break
 
-    print("# of Neightbor: " + str(len(neighbors)))
+    # print("# of Neightbor: " + str(len(neighbors)))
     return neighbors
 
 def objective_fn_overlay(state,i,it):
@@ -280,10 +280,8 @@ def rule_neighbor(sol,i,it):
         state.append(boxes)
         neighbors.append(state)
 
-    print("# of Neightbor: " + str(len(neighbors)))
-    #if len(neighbors) != 0:
-    #    for n in neighbors:
-    #        print(n)
+    # print("# of Neightbor: " + str(len(neighbors)))
+
     return neighbors
 
 
