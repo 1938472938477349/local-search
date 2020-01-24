@@ -8,8 +8,8 @@ class App:
         self.window = window
         self.window.title(window_title)
         self.window.resizable(False, False)
-        self.width = 1366
-        self.height = 720
+        self.width = 800
+        self.height = 600
         self.canvas_width = self.width
         self.canvas_height = self.height
         self.canvas1 = tk.Canvas(window, width = self.canvas_width, height = self.canvas_height, background='black')
